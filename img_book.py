@@ -1,8 +1,10 @@
+from fileinput import filename
 import requests
 import os
 from pathlib import Path
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+from urllib.parse import urljoin
 
 
 def check_for_redirect(response):  
@@ -17,8 +19,9 @@ def parse_book_page(response):
     name, author = title_text.split(" :: ")
     name_book = name.strip()
     author_book = author.strip()
-    filename = f"{name_book}.txt"
-    return filename
+    filename_img = soup.find('div', class_="bookimage").find('img')['src']
+    filename_book = f"{name_book}.txt"
+    return filename_book, filename_img
 
 
 def download_txt(url, filename, folder='books/'):
@@ -30,7 +33,17 @@ def download_txt(url, filename, folder='books/'):
         file.write(response.content)
 
 
+def download_img(url, filename, payload=None, folder='images/'):
+    os.makedirs(folder, exist_ok=True)
+    response = requests.get(url, payload)
+    response.raise_for_status()
+    path = os.path.join(folder, sanitize_filename(filename))
+    with open(path, 'wb') as file:
+        file.write(response.content)
+
+
 def main():
+    book_img_url = "https://tululu.org/"
     for book_number in range(1,11):
         params = {"id": book_number}
         loading_book_url = "https://tululu.org/txt.php"
@@ -43,13 +56,14 @@ def main():
             page_response = requests.get(page_book)
             page_response.raise_for_status()
             check_for_redirect(page_response)
-            filename = parse_book_page(page_response)
-            print(filename)
-            download_txt(loading_book_url, filename)
+
+            filename_book, filename_img = parse_book_page(page_response)
+            full_img_url = urljoin(book_img_url, filename_img)
+            download_img(full_img_url, filename_img)
+            
+            download_txt(loading_book_url, filename_book)
         except requests.HTTPError:
             print("Такой книги нет")
-
-    
 
 
 if __name__ == "__main__":
