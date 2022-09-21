@@ -19,18 +19,22 @@ def parse_book_page(response):
     name, author = title_text.split(" :: ")
     name_book = name.strip()
     author_book = author.strip()
+    commends = soup.find_all('div', class_="texts")
+    text_commends = []
+    for commend in commends:
+        text_commends.append(commend.find('span', class_="black").text)
     filename_img = soup.find('div', class_="bookimage").find('img')['src']
     filename_book = f"{name_book}.txt"
     return filename_book, filename_img
 
 
-def download_txt(url, filename, folder='books/'):
+def download_txt(url, params, filename, folder='books/'):
     os.makedirs(folder, exist_ok=True)
-    response = requests.get(url)
+    response = requests.get(url, params)
     response.raise_for_status()
     path = os.path.join(folder, sanitize_filename(filename))
-    with open(path, 'wb') as file:
-        file.write(response.content)
+    with open(path, 'w', encoding="utf-8") as file:
+        file.write(response.text)
 
 
 def download_img(url, filename, payload=None, folder='images/'):
@@ -61,7 +65,7 @@ def main():
             full_img_url = urljoin(book_img_url, filename_img)
             download_img(full_img_url, filename_img)
             
-            download_txt(loading_book_url, filename_book)
+            download_txt(loading_book_url, params, filename_book)
         except requests.HTTPError:
             print("Такой книги нет")
 
