@@ -19,10 +19,17 @@ def parse_book_page(response):
     name, author = title_text.split(" :: ")
     name_book = name.strip()
     author_book = author.strip()
+
     commends = soup.find_all('div', class_="texts")
     text_commends = []
     for commend in commends:
         text_commends.append(commend.find('span', class_="black").text)
+    
+    genres = soup.find('span', class_="d_book").find_all('a')
+    text_genres = []
+    for genre in genres:
+        text_genres.append(genre.text)
+
     filename_img = soup.find('div', class_="bookimage").find('img')['src']
     filename_book = f"{name_book}.txt"
     return filename_book, filename_img
