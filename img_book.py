@@ -31,8 +31,15 @@ def parse_book_page(response):
         text_genres.append(genre.text)
 
     filename_img = soup.find('div', class_="bookimage").find('img')['src']
-    filename_book = f"{name_book}.txt"
-    return filename_book, filename_img
+
+    all_about_book = {
+        "name_book": name_book,
+        "author_book": author_book,
+        "text_genres": text_genres,
+        "text_commends": text_commends,
+        "filename_img": filename_img
+    }
+    return all_about_book
 
 
 def download_txt(url, params, filename, folder='books/'):
@@ -68,10 +75,13 @@ def main():
             page_response.raise_for_status()
             check_for_redirect(page_response)
 
-            filename_book, filename_img = parse_book_page(page_response)
+            all_about_book = parse_book_page(page_response)
+            filename_img =  all_about_book["filename_img"]
+
             full_img_url = urljoin(book_img_url, filename_img)
             download_img(full_img_url, filename_img)
             
+            filename_book = f"{all_about_book['name_book']}.txt"
             download_txt(loading_book_url, params, filename_book)
         except requests.HTTPError:
             print("Такой книги нет")
