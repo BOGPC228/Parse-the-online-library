@@ -1,10 +1,12 @@
-from fileinput import filename
-import requests
 import os
+import argparse
 from pathlib import Path
+
+import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin
+
 
 
 def check_for_redirect(response):  
@@ -60,9 +62,17 @@ def download_img(url, filename, payload=None, folder='images/'):
         file.write(response.content)
 
 
+parser = argparse.ArgumentParser(
+    description='Выберите диапазон скачиваемых книг'
+)
+parser.add_argument('--start_id', help='Запуск программы с введённого числа', default=1, type=int)
+parser.add_argument('--end_id', help='Конец программы с введённого числа', default=10, type=int)
+args = parser.parse_args()
+
+
 def main():
     book_img_url = "https://tululu.org/"
-    for book_number in range(1,11):
+    for book_number in range(args.start_id, args.end_id):
         params = {"id": book_number}
         loading_book_url = "https://tululu.org/txt.php"
         book_response = requests.get(loading_book_url, params)
