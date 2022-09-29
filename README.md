@@ -13,11 +13,11 @@
 ```
 - Для загрузки книг запустите команду и у вас скачается стандартное количество книг от 1 до 10 
 ```python
-    python3 img_book.py
+    python3 parse_tululu.py
 ```
 - Для загрузки книг с возможностью выбора диапазона запустите команду 
 ```python
-    python3 img_book.py --start_id 10 --end_id 20
+    python3 parse_tululu.py --start_id 10 --end_id 20
 ```
 
 ## Цели проекта
