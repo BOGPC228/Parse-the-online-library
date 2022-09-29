@@ -1,6 +1,7 @@
 import os
 import argparse
 from pathlib import Path
+from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
@@ -8,8 +9,7 @@ from pathvalidate import sanitize_filename
 from urllib.parse import urljoin
 
 
-
-def check_for_redirect(response):  
+def check_for_redirect(response):
     if response.history:
         raise requests.HTTPError
 
@@ -22,10 +22,10 @@ def parse_book_page(response):
     name_book = name.strip()
     author_book = author.strip()
 
-    commends = soup.find_all('div', class_="texts")
-    text_commends = []
-    for commend in commends:
-        text_commends.append(commend.find('span', class_="black").text)
+    comments = soup.find_all('div', class_="texts")
+    text_comments = []
+    for comment in comments:
+        text_comments.append(comment.find('span', class_="black").text)
     
     genres = soup.find('span', class_="d_book").find_all('a')
     text_genres = []
@@ -38,7 +38,7 @@ def parse_book_page(response):
         "name_book": name_book,
         "author_book": author_book,
         "text_genres": text_genres,
-        "text_commends": text_commends,
+        "text_comments": text_comments,
         "filename_img": filename_img
     }
     return all_about_book
@@ -62,19 +62,20 @@ def download_img(url, filename, payload=None, folder='images/'):
         file.write(response.content)
 
 
-parser = argparse.ArgumentParser(
-    description='Выберите диапазон скачиваемых книг'
-)
-parser.add_argument('--start_id', help='Запуск программы с введённого числа', default=1, type=int)
-parser.add_argument('--end_id', help='Конец программы с введённого числа', default=10, type=int)
-args = parser.parse_args()
-
-
 def main():
+    parser = argparse.ArgumentParser(
+        description='Выберите диапазон скачиваемых книг'
+    )
+    parser.add_argument('--start_id', help='Запуск программы с введённого числа',
+                        default=1, type=int)
+    parser.add_argument('--end_id', help='Конец программы с введённого числа',
+                        default=10, type=int)
+    args = parser.parse_args()
+
     book_img_url = "https://tululu.org/"
+    loading_book_url = "https://tululu.org/txt.php"
     for book_number in range(args.start_id, args.end_id):
         params = {"id": book_number}
-        loading_book_url = "https://tululu.org/txt.php"
         book_response = requests.get(loading_book_url, params)
         page_book = f'https://tululu.org/b{book_number}/'
         try:
@@ -90,11 +91,14 @@ def main():
 
             full_img_url = urljoin(book_img_url, filename_img)
             download_img(full_img_url, filename_img)
-            
+
             filename_book = f"{all_about_book['name_book']}.txt"
             download_txt(loading_book_url, params, filename_book)
         except requests.HTTPError:
             print("Такой книги нет")
+        except requests.ConnectionError:
+            print("Повторное подключение")
+            sleep(20)
 
 
 if __name__ == "__main__":
