@@ -19,35 +19,32 @@ def parse_book_page(response):
     title_tag = soup.find(id='content').find('h1')
     title_text = title_tag.text
     name, author = title_text.split(" :: ")
-    name_book = name.strip()
-    author_book = author.strip()
+    book_name = name.strip()
+    book_author = author.strip()
 
     comments = soup.find_all('div', class_="texts")
-    text_comments = []
-    for comment in comments:
-        text_comments.append(comment.find('span', class_="black").text)
-    
+    comments_text = [(comment.find('span', class_="black").text) for comment in comments]
+
     genres = soup.find('span', class_="d_book").find_all('a')
-    text_genres = []
-    for genre in genres:
-        text_genres.append(genre.text)
+    genres_text = [(genre.text) for genre in genres]
 
-    filename_img = soup.find('div', class_="bookimage").find('img')['src']
+    img_file_path = soup.find('div', class_="bookimage").find('img')['src']
 
-    all_about_book = {
-        "name_book": name_book,
-        "author_book": author_book,
-        "text_genres": text_genres,
-        "text_comments": text_comments,
-        "filename_img": filename_img
+    book = {
+        "book_name": book_name,
+        "book_author": book_author,
+        "genres_text": genres_text,
+        "comments_text": comments_text,
+        "img_file_path": img_file_path
     }
-    return all_about_book
+    return book
 
 
 def download_txt(url, params, filename, folder='books/'):
     os.makedirs(folder, exist_ok=True)
     response = requests.get(url, params)
     response.raise_for_status()
+    check_for_redirect(response)
     path = os.path.join(folder, sanitize_filename(filename))
     with open(path, 'w', encoding="utf-8") as file:
         file.write(response.text)
@@ -72,28 +69,27 @@ def main():
                         default=10, type=int)
     args = parser.parse_args()
 
-    book_img_url = "https://tululu.org/"
     loading_book_url = "https://tululu.org/txt.php"
     for book_number in range(args.start_id, args.end_id):
         params = {"id": book_number}
         book_response = requests.get(loading_book_url, params)
-        page_book = f'https://tululu.org/b{book_number}/'
+        book_url = f'https://tululu.org/b{book_number}/'
         try:
             book_response.raise_for_status()
             check_for_redirect(book_response)
 
-            page_response = requests.get(page_book)
+            page_response = requests.get(book_url)
             page_response.raise_for_status()
             check_for_redirect(page_response)
 
-            all_about_book = parse_book_page(page_response)
-            filename_img =  all_about_book["filename_img"]
+            book = parse_book_page(page_response)
+            img_file_path =  book["img_file_path"]
 
-            full_img_url = urljoin(book_img_url, filename_img)
-            download_img(full_img_url, filename_img)
+            full_img_url = urljoin(book_url, img_file_path)
+            download_img(full_img_url, img_file_path)
 
-            filename_book = f"{all_about_book['name_book']}.txt"
-            download_txt(loading_book_url, params, filename_book)
+            book_filename = f"{book['book_name']}.txt"
+            download_txt(loading_book_url, params, book_filename)
         except requests.HTTPError:
             print("Такой книги нет")
         except requests.ConnectionError:
