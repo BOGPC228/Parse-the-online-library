@@ -6,7 +6,9 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
+from parse_tululu_category import get_urls_books
+import json
 
 
 def check_for_redirect(response):
@@ -68,12 +70,14 @@ def main():
     parser.add_argument('--end_id', help='Конец программы с введённого числа',
                         default=10, type=int)
     args = parser.parse_args()
-
+    
+    books_characteristics = []
     loading_book_url = "https://tululu.org/txt.php"
-    for book_number in range(args.start_id, args.end_id):
+    books_urls = get_urls_books()
+    for book_url in books_urls:
+        book_number = urlparse(book_url).path.split("/")[1][1:]
         params = {"id": book_number}
         book_response = requests.get(loading_book_url, params)
-        book_url = f'https://tululu.org/b{book_number}/'
         try:
             book_response.raise_for_status()
             check_for_redirect(book_response)
@@ -83,6 +87,7 @@ def main():
             check_for_redirect(page_response)
 
             book = parse_book_page(page_response)
+            books_characteristics.append(book)
             img_file_path =  book["img_file_path"]
 
             full_img_url = urljoin(book_url, img_file_path)
@@ -95,7 +100,12 @@ def main():
         except requests.ConnectionError:
             print("Повторное подключение")
             sleep(20)
-
+    folder = "media/"
+    os.makedirs(folder, exist_ok=True)
+    filename = "book_parse.json"
+    path = os.path.join(folder, sanitize_filename(filename))
+    with open(path, 'w', encoding="utf-8") as json_file:
+        json.dump(books_characteristics, json_file, ensure_ascii=False)
 
 if __name__ == "__main__":
     main()
