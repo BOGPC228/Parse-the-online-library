@@ -18,19 +18,20 @@ def check_for_redirect(response):
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    title_tag = soup.find(id='content').find('h1')
+    title_tag = soup.select_one("#content")
     title_text = title_tag.text
     name, author = title_text.split(" :: ")
     book_name = name.strip()
     book_author = author.strip()
 
-    comments = soup.find_all('div', class_="texts")
-    comments_text = [(comment.find('span', class_="black").text) for comment in comments]
+    comments = soup.select(".texts")
+    comments_text = [(comment.select_one("span.black").text) for comment in comments]
 
-    genres = soup.find('span', class_="d_book").find_all('a')
+    genres = soup.select_one("span.d_book").select("a")
     genres_text = [(genre.text) for genre in genres]
 
-    img_file_path = soup.find('div', class_="bookimage").find('img')['src']
+    img_file_path = soup.select_one("div.bookimage").select_one("img")["src"]
+    
 
     book = {
         "book_name": book_name,
@@ -69,7 +70,7 @@ def main():
                         default=1, type=int)
     parser.add_argument('--end_id', help='Конец программы с введённого числа',
                         default=10, type=int)
-    args = parser.parse_args()
+    #args = parser.parse_args()
     
     books_characteristics = []
     loading_book_url = "https://tululu.org/txt.php"
