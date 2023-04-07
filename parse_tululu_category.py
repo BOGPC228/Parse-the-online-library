@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
 
-def get_urls_books():
+def get_urls_books(args):
     url_books = []
     
-    for page in range(10):
+    for page in range(args.start_id, args.end_id):
         url = "https://tululu.org/l55/{}".format(page)
         response = requests.get(url)
         response.raise_for_status()
