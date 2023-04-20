@@ -18,7 +18,7 @@ def check_for_redirect(response):
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    title_tag = soup.select_one("#content")
+    title_tag = soup.select_one("h1")
     title_text = title_tag.text
     name, author = title_text.split(" :: ")
     book_name = name.strip()
@@ -53,9 +53,9 @@ def download_txt(url, params, filename, folder='books/'):
         file.write(response.text)
 
 
-def download_img(url, filename, payload=None, folder='images/'):
+def download_img(url, filename, folder='/images'):
     os.makedirs(folder, exist_ok=True)
-    response = requests.get(url, payload)
+    response = requests.get(url)
     response.raise_for_status()
     path = os.path.join(folder, sanitize_filename(filename))
     with open(path, 'wb') as file:
@@ -66,19 +66,29 @@ def main():
     parser = argparse.ArgumentParser(
         description='Выберите диапазон скачиваемых книг'
     )
-    parser.add_argument('--start_id', help='Запуск программы с введённого числа',
+    parser.add_argument('--start_page', help='Запуск программы с введённого числа',
                         default=1, type=int)
-    parser.add_argument('--end_id', help='Конец программы с введённого числа',
-                        default=10, type=int)
-    #args = parser.parse_args()
-    
+    parser.add_argument('--end_page', help='Конец программы с введённого числа',
+                        default=2, type=int)
+    parser.add_argument('--dest_folder', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON',
+                        default="media", type=str)
+    parser.add_argument('--skip_imgs', help='не скачивать картинки',
+                        action="store_false")
+    parser.add_argument('--skip_txt', help='не скачивать книги',
+                        action="store_false")
+    parser.add_argument('--json_path', help='указать свой путь к *.json файлу с результатами',
+                        default="media", type=str)
+    args = parser.parse_args()
+
+
     books_characteristics = []
     loading_book_url = "https://tululu.org/txt.php"
-    books_urls = get_urls_books()
+    books_urls = get_urls_books(args)
     for book_url in books_urls:
         book_number = urlparse(book_url).path.split("/")[1][1:]
         params = {"id": book_number}
         book_response = requests.get(loading_book_url, params)
+        print(book_url)
         try:
             book_response.raise_for_status()
             check_for_redirect(book_response)
@@ -91,22 +101,28 @@ def main():
             books_characteristics.append(book)
             img_file_path =  book["img_file_path"]
 
-            full_img_url = urljoin(book_url, img_file_path)
-            download_img(full_img_url, img_file_path)
-
-            book_filename = f"{book['book_name']}.txt"
-            download_txt(loading_book_url, params, book_filename)
+            if args.skip_imgs:
+                full_img_url = urljoin(book_url, img_file_path)
+                folder='images'
+                path = os.path.join(args.dest_folder, folder)
+                download_img(full_img_url, img_file_path, path)
+            if args.skip_txt:
+                book_filename = f"{book['book_name']}.txt"
+                folder='books'
+                path = os.path.join(args.dest_folder, folder)
+                download_txt(loading_book_url, params, book_filename, path)
         except requests.HTTPError:
             print("Такой книги нет")
         except requests.ConnectionError:
             print("Повторное подключение")
             sleep(20)
-    folder = "media/"
+    folder = args.json_path
     os.makedirs(folder, exist_ok=True)
     filename = "book_parse.json"
     path = os.path.join(folder, sanitize_filename(filename))
     with open(path, 'w', encoding="utf-8") as json_file:
         json.dump(books_characteristics, json_file, ensure_ascii=False)
+
 
 if __name__ == "__main__":
     main()

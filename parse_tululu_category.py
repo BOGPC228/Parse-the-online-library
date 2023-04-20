@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 def get_urls_books(args):
     url_books = []
     
-    for page in range(args.start_id, args.end_id):
+    for page in range(args.start_page, args.end_page):
         url = "https://tululu.org/l55/{}".format(page)
         response = requests.get(url)
         response.raise_for_status()
