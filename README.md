@@ -19,6 +19,22 @@
 ```python
     python3 parse_tululu.py --start_id 10 --end_id 20
 ```
+- Указать свой путь к каталогу с результатами парсинга: картинкам, книгам, JSON
+```python
+    python3 parse_tululu.py --dest_folder
+```
+- Если не хотите скачивать картинки
+```python
+    python3 parse_tululu.py --skip_imgs
+```
+- Если не хотите скачивать книги
+```python
+    python3 parse_tululu.py --skip_txt
+```
+- Указать свой путь к *.json файлу с результатами
+```python
+    python3 parse_tululu.py --json_path
+```
 
 ## Цели проекта
 

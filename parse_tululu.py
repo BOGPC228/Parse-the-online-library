@@ -69,7 +69,7 @@ def main():
     parser.add_argument('--start_page', help='Запуск программы с введённого числа',
                         default=1, type=int)
     parser.add_argument('--end_page', help='Конец программы с введённого числа',
-                        default=2, type=int)
+                        default=10, type=int)
     parser.add_argument('--dest_folder', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON',
                         default="media", type=str)
     parser.add_argument('--skip_imgs', help='не скачивать картинки',
@@ -88,7 +88,6 @@ def main():
         book_number = urlparse(book_url).path.split("/")[1][1:]
         params = {"id": book_number}
         book_response = requests.get(loading_book_url, params)
-        print(book_url)
         try:
             book_response.raise_for_status()
             check_for_redirect(book_response)
