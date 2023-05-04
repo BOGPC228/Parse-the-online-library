@@ -73,9 +73,9 @@ def main():
     parser.add_argument('--dest_folder', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON',
                         default="media", type=str)
     parser.add_argument('--skip_imgs', help='не скачивать картинки',
-                        action="store_false")
+                        action="store_true")
     parser.add_argument('--skip_txt', help='не скачивать книги',
-                        action="store_false")
+                        action="store_true")
     parser.add_argument('--json_path', help='указать свой путь к *.json файлу с результатами',
                         default="media", type=str)
     args = parser.parse_args()
@@ -87,8 +87,9 @@ def main():
     for book_url in books_urls:
         book_number = urlparse(book_url).path.split("/")[1][1:]
         params = {"id": book_number}
-        book_response = requests.get(loading_book_url, params)
         try:
+            book_response = requests.get(loading_book_url, params)
+
             book_response.raise_for_status()
             check_for_redirect(book_response)
 
@@ -100,12 +101,12 @@ def main():
             books_characteristics.append(book)
             img_file_path =  book["img_file_path"]
 
-            if args.skip_imgs:
+            if not args.skip_imgs:
                 full_img_url = urljoin(book_url, img_file_path)
                 folder='images'
                 path = os.path.join(args.dest_folder, folder)
                 download_img(full_img_url, img_file_path, path)
-            if args.skip_txt:
+            if not args.skip_txt:
                 book_filename = f"{book['book_name']}.txt"
                 folder='books'
                 path = os.path.join(args.dest_folder, folder)
