@@ -5,10 +5,10 @@ from urllib.parse import urljoin
 from parse_tululu import check_for_redirect
 
 
-def get_urls_books(args):
+def get_urls_books(start_page, end_page):
     books_url = []
-    try:
-        for page in range(args.start_page, args.end_page):
+    for page in range(start_page, end_page):
+        try:
             url = "https://tululu.org/l55/{}".format(page)
             response = requests.get(url)
             check_for_redirect(response)
@@ -19,10 +19,10 @@ def get_urls_books(args):
                 book_id = book_id.find('a')['href']
                 book_url = urljoin(url, book_id)
                 books_url.append(book_url)
-
-        return books_url
-    except requests.HTTPError:
-        print("Такой страницы нету")
-    except requests.ConnectionError:
-        print("Повторное подключение")
-        sleep(20)
+    
+            return books_url
+        except requests.HTTPError:
+            print("Такой страницы нету")
+        except requests.ConnectionError:
+            print("Повторное подключение")
+            sleep(20)

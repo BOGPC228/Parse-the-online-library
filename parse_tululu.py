@@ -83,7 +83,7 @@ def main():
 
     books_characteristics = []
     loading_book_url = "https://tululu.org/txt.php"
-    books_urls = get_urls_books(args)
+    books_urls = get_urls_books(args.start_page, args.end_page)
     for book_url in books_urls:
         book_number = urlparse(book_url).path.split("/")[1][1:]
         params = {"id": book_number}
