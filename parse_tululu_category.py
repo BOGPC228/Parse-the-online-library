@@ -2,7 +2,7 @@ import requests
 from time import sleep
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-from parse_tululu import check_for_redirect
+from check_for_redirect import check_for_redirect
 
 
 def get_urls_books(start_page, end_page):
