@@ -1,7 +1,9 @@
-import requests
 from time import sleep
+
+import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+
 from check_for_redirect import check_for_redirect
 
 
