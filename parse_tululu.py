@@ -28,8 +28,9 @@ def parse_book_page(response):
     genres = soup.select_one("span.d_book").select("a")
     genres_text = [(genre.text) for genre in genres]
 
-    img_file_path = str(soup.select_one("div.bookimage img"))
-
+    img_file_path = soup.select_one("div.bookimage").select_one("img")["src"]
+    img_file_path = img_file_path.replace("shots", "images")
+    print(img_file_path)
 
     book = {
         "book_name": book_name,
@@ -51,16 +52,16 @@ def download_txt(url, params, filename, folder='books/'):
         file.write(response.text)
 
 
-def download_img(url, filename, folder='/shots'):
+def download_img(url, filename, folder='/images'):
     os.makedirs(folder, exist_ok=True)
     response = requests.get(url)
     response.raise_for_status()
+
     #path = os.path.join(folder, sanitize_filename(filename))
     file_name = os.path.basename(urlparse(url).path)
-    file_number = file_name.replace("shots", "")
+    file_number = file_name.replace("images", "")
     new_file_name = os.path.join(folder, file_number)
-    if file_name == "nopic.gif":
-        new_file_name = "media/shots/nopic.gif"
+
     with open(new_file_name, 'wb') as file:
         file.write(response.content)
 
@@ -106,7 +107,7 @@ def main():
 
             if not args.skip_imgs:
                 full_img_url = urljoin(book_url, img_file_path)
-                folder='shots'
+                folder='images'
                 path = os.path.join(args.dest_folder, folder)
                 download_img(full_img_url, img_file_path, path)
             if not args.skip_txt:
