@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin, urlparse
 
-from parse_tululu_category import get_urls_books
+from parse.parse_tululu_category import get_urls_books
 from check_for_redirect import check_for_redirect
 
 
