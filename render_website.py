@@ -27,7 +27,7 @@ def rebuild():
     print("Site rebuilt")
 
 
-def main():
+if __name__ == "__main__":
     os.makedirs("pages", exist_ok=True)
     
     rebuild()
@@ -35,7 +35,3 @@ def main():
     server = Server()
     server.watch('template.html', rebuild)
     server.serve(root='.')
-
-
-if __name__ == "__main__":
-    main()
