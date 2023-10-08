@@ -36,7 +36,7 @@
       <div class="row">
         {% for book in books %}
           <div class="col-md-6">
-           <div class="card mb-3" style="max-width: 540px;">
+           <div class="card mb-3" style="max-width: 540px; min-height:300;" >
             <div class="row no-gutters">
               <div class="col-md-6">
                 <img src="../media{{book.img_file_path}}" class="card-img" alt="{{book.book_name}} обложка книги">
@@ -45,7 +45,9 @@
                 <div class="card-body">
                   <h5 class="card-title">{{book.book_name}}</h5>
                   <p class="card-text">Автор - {{book.book_author}}</p>
-                  <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                  {% for genres in book.genres_text %}
+                    <span class="badge badge-light">{{genres}}</span>
+                  {% endfor %}
                   <P><a href="media/books/{{book.book_name}}.txt" target="_blank">Читать</a></p>
                 </div>
               </div>
