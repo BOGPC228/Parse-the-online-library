@@ -56,8 +56,6 @@ def download_img(url, filename, folder='/images'):
     os.makedirs(folder, exist_ok=True)
     response = requests.get(url)
     response.raise_for_status()
-
-    #path = os.path.join(folder, sanitize_filename(filename))
     file_name = os.path.basename(urlparse(url).path)
     file_number = file_name.replace("images", "")
     new_file_name = os.path.join(folder, file_number)
