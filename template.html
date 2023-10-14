@@ -49,7 +49,7 @@
                   {% for genres in book.genres_text %}
                     <span class="badge badge-light">{{genres}}</span>
                   {% endfor %}
-                  <P><a href="../media/books/{{book.book_name}}.txt" target="_blank">Читать</a></p>
+                  <P><a href="../media/books/{{book.book_name|urlencode}}.txt" target="_blank">Читать</a></p>
                 </div>
               </div>
             </div>
