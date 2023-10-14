@@ -1,6 +1,6 @@
 # Парсим сайт с книгами
 
-Модуль для загрузки книг и картинок с [источника](https://tululu.org/).
+Скрипт для создания своего сайта с библиотекой.
 
 ## Запуск
 
@@ -11,30 +11,19 @@
 ```python
     pip install -r requirements.txt
 ```
-- Для загрузки книг запустите команду и у вас скачается стандартное количество книг от 1 до 10 
+- Указать свой путь к *.json файлу 
 ```python
-    python3 parse_tululu.py
+    python3 render_website.py --json_path
 ```
-- Для загрузки книг с возможностью выбора диапазона запустите команду 
-```python
-    python3 parse_tululu.py --start_id 10 --end_id 20
+- Запустить рендер сайта
+```python 
+    python3 render_website.py
 ```
-- Указать свой путь к каталогу с результатами парсинга: картинкам, книгам, JSON
-```python
-    python3 parse_tululu.py --dest_folder
-```
-- Если не хотите скачивать картинки
-```python
-    python3 parse_tululu.py --skip_imgs
-```
-- Если не хотите скачивать книги
-```python
-    python3 parse_tululu.py --skip_txt
-```
-- Указать свой путь к *.json файлу с результатами
-```python
-    python3 parse_tululu.py --json_path
-```
+
+## Пример сайта
+
+[Мой сайт](https://bogpc228.github.io/Parse-the-online-library/pages/index1.html).
+![Скриншот](static/Скриншот.png)
 
 ## Цели проекта
 
