@@ -1,13 +1,14 @@
 import os
 import json
 import math
+import argparse
 
 from livereload import Server
 from jinja2 import Template, Environment, FileSystemLoader
 from more_itertools import chunked
 
-def rebuild():
-    with open("media/book_parse.json", 'r', encoding="utf-8") as json_file:
+def rebuild(media):
+    with open(media, 'r', encoding="utf-8") as json_file:
         books = json.load(json_file)
 
     books_count = len(books)
@@ -28,10 +29,19 @@ def rebuild():
 
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description='Пусть к Json')
+    parser.add_argument('--json_path', help='указать свой путь к *.json файлу с результатами',
+                        default="media/book_parse.json", type=str)
+    args = parser.parse_args()
+
     os.makedirs("pages", exist_ok=True)
 
-    rebuild()
+    media = args.json_path
     
+    rebuild(media)
+
     server = Server()
     server.watch('template.html', rebuild)
     server.serve(root='.')
