@@ -50,7 +50,7 @@ def download_txt(url, params, filename, folder='books/'):
     path = os.path.join(folder, sanitize_filename(filename))
     with open(path, 'w', encoding="utf-8") as file:
         file.write(response.text)
-
+    return path.replace("\\", "//")
 
 def download_img(url, filename, folder='/images'):
     os.makedirs(folder, exist_ok=True)
@@ -107,12 +107,14 @@ def main():
                 full_img_url = urljoin(book_url, img_file_path)
                 folder='images'
                 path = os.path.join(args.dest_folder, folder)
-                download_img(full_img_url, img_file_path, path)
+                book_img = download_img(full_img_url, img_file_path, path)
+                books_characteristics.append(book_img)
             if not args.skip_txt:
                 book_filename = f"{book['book_name']}.txt"
                 folder='books'
                 path = os.path.join(args.dest_folder, folder)
-                download_txt(loading_book_url, params, book_filename, path)
+                book_path = download_txt(loading_book_url, params, book_filename, path)
+                books_characteristics.append(book_path)
         except requests.HTTPError:
             print("Такой книги нет")
         except requests.ConnectionError:
