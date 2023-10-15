@@ -40,16 +40,16 @@
            <div class="card mb-3" style="max-width: 540px;">
             <div class="row no-gutters">
               <div class="col-md-6">
-                <img src="../media{{book.img_file_path}}" class="card-img" alt="{{book.book_name}} обложка книги">
+                <img src="../{{book['image_src']|urlencode}}" class="card-img" alt="{{book['title']}} обложка книги">
               </div>
               <div class="col-md-6">
                 <div class="card-body">
-                  <h5 class="card-title">{{book.book_name}}</h5>
-                  <p class="card-text">Автор - {{book.book_author}}</p>
-                  {% for genres in book.genres_text %}
-                    <span class="badge badge-light">{{genres}}</span>
+                  <h5 class="card-title">{{book['title']}}</h5>
+                  <p class="card-text">Автор - {{book['author']}}</p>
+                  {% for genre in book['genres'] %}
+                    <span color: black> {{genre}} </span>
                   {% endfor %}
-                  <P><a href="../media/books/{{book.book_name|urlencode}}.txt" target="_blank">Читать</a></p>
+                  <p><a href="../{{book['book_path']|urlencode}}" target="_blank">Читать</a></p>
                 </div>
               </div>
             </div>

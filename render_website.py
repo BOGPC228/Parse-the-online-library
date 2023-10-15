@@ -43,5 +43,5 @@ if __name__ == "__main__":
     rebuild(media)
 
     server = Server()
-    server.watch('template.html', rebuild)
+    server.watch('template.html', lambda:rebuild(media))
     server.serve(root='.')
