@@ -22,7 +22,10 @@
 
 ## Пример сайта
 
-[Мой сайт](https://bogpc228.github.io/Parse-the-online-library/pages/index1.html).
+Онлайн ссылка на [мой сайт](https://bogpc228.github.io/Parse-the-online-library/pages/index1.html).
+
+После запуска скрита можете переходить на локальный [сайт](http://127.0.0.1:5500/pages/index1.html).
+
 ![Скриншот](static/Скриншот.png)
 
 ## Цели проекта
