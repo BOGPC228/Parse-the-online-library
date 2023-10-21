@@ -13,23 +13,23 @@
       <div style="text-align: center">
         <nav aria-label="Page navigation example" style="margin-top: 40px; display: inline-block;">
            <ul class="pagination">
-            {% if current_page == 1 %}
-              <li class="page-item disabled"><span class="page-link">Предыдущая</span></li>
-	          {% else %}
-              <li class="page-item"><a class="page-link" href="index{{ current_page -1 }}.html">Предыдущая</a></li>
-	          {% endif %}
-            {% for page in range(1, total_pages + 1) %}
-              {% if page == current_page %}
-                <li class="page-item active"><span class="page-link">{{ page }}</span></li>
-              {% else %}
-                <li class="page-item"><a class="page-link" href="index{{ page }}.html">{{ page }}</a></li>
-              {% endif %}
-            {% endfor %}
-            {% if current_page == total_pages %}
-              <li class="page-item disabled"><span class="page-link">Следующая</span></li>
-            {% else %}
-              <li class="page-item"><a class="page-link" href="index{{ current_page + 1 }}.html">Следующая</a></li>
-	          {% endif %}
+             {% if current_page == 1 %}
+               <li class="page-item disabled"><span class="page-link">Предыдущая</span></li>
+	           {% else %}
+               <li class="page-item"><a class="page-link" href="index{{ current_page -1 }}.html">Предыдущая</a></li>
+	           {% endif %}
+             {% for page in range(1, total_pages + 1) %}
+               {% if page == current_page %}
+                 <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+               {% else %}
+                 <li class="page-item"><a class="page-link" href="index{{ page }}.html">{{ page }}</a></li>
+               {% endif %}
+             {% endfor %}
+             {% if current_page == total_pages %}
+               <li class="page-item disabled"><span class="page-link">Следующая</span></li>
+             {% else %}
+               <li class="page-item"><a class="page-link" href="index{{ current_page + 1 }}.html">Следующая</a></li>
+	           {% endif %}
            </ul>
         </nav>
       </div>
