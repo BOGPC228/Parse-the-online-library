@@ -29,8 +29,6 @@ def rebuild(json_path, PAGES_COUNT):
         with open(F"pages/index{page_number}.html", "w", encoding="utf-8") as html_file:
             html_file.write(render_html)
     
-    print("Site rebuilt")
-
 
 if __name__ == "__main__":
 
@@ -44,8 +42,8 @@ if __name__ == "__main__":
 
     json_path = args.json_path
     
-    rebuild(json_path)
+    rebuild(json_path, PAGES_COUNT)
 
     server = Server()
-    server.watch("template.html", lambda:rebuild(json_path))
+    server.watch("template.html", lambda:rebuild(json_path, PAGES_COUNT))
     server.serve(root=".")
